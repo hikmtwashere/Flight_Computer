@@ -1,15 +1,8 @@
+
 /*
---------------YAPILACAKLAR--------------
-+ sensör kütüphaneleri ve sensörleri başlatma
-+ kalman filtresi chatgpt hallet.
-+ test algoritmasının benzerini uygula
-+ 5 kez negatif oldu mu şartı ekle
-+ kurtarmalar ekle
-+ haberleşme kısmını taslak olarak hazırla
-+ YAZILAN KODU MODÜLER HALE GETİR DAHA ANLAŞILIR VE PARÇALARA AYRILMIŞ OLSUN FONSKİYON STRUCTER GİBİ
-+ TRUNCATE 2 DECIMALS FONKSİYONU BELKİ ÇIKATRILABİLİR
--------------------------------------------
-*/
+ * Flight Computer Software
+ * Developed by:Yavuz Selim Yılmaz & Hikmet Berat Ünverdi
+ */
 
 /*SON GÜNCELLEME
     05.07.25
