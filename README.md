@@ -168,3 +168,10 @@ Bu sistem;
 * Genişletilebilir
 
 bir uçuş bilgisayarı mimarisi sunar.
+---
+
+## 📄 Lisans (License)
+
+Bu proje **MIT Lisansı** ile korunmaktadır. Daha fazla bilgi için [LICENSE](LICENSE) dosyasına göz atabilirsiniz.
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
