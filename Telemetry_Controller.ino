@@ -1,3 +1,8 @@
+/*
+ * Flight Computer Software
+ * Developed by:Yavuz Selim Yılmaz & Hikmet Berat Ünverdi
+ */
+
 #include <Arduino.h>
 #include <TinyGPS++.h>
 
