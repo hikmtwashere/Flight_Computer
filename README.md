@@ -14,6 +14,7 @@ Amaç; uçuş güvenliğini korurken, telemetri kararlılığını artırmak ve 
 ---
 
 ## Sistem Genel Bakışı
+![Başlıksız Diyagram (4) (1) (1)](https://github.com/user-attachments/assets/77bdb82a-5a53-47cf-acc9-5bb2befef873)
 
 Sistem, görevlerin birbirini etkilememesi için **ayrık sorumluluk prensibiyle** tasarlanmıştır.
 
