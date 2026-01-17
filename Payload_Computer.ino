@@ -1,6 +1,6 @@
 /*
  * Flight Computer Software
- * Developed by: Selim Yılmaz & Hikmet Berat Ünverdi
+ * Developed by:Yavuz Selim Yılmaz & Hikmet Berat Ünverdi
  */
 
 #include <Arduino.h>
