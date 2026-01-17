@@ -8,9 +8,8 @@ Amaç; uçuş güvenliğini korurken, telemetri kararlılığını artırmak ve 
 
 ## Geliştiriciler
 
-* **Yavuz Selim Yılmaz**
-* **Hikmet Berat Ünverdi**
-
+* **Yavuz Selim Yılmaz** - [@YSelimy](https://github.com/YSelimy)
+* **Hikmet Berat Ünverdi** - [@hikmtwashere](https://github.com/hikmtwashere)
 ---
 
 ## Sistem Genel Bakışı
