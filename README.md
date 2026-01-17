@@ -1,93 +1,170 @@
-Flight Computer Software
+# Flight Computer System
 
-Bu depo, model roket ve sonda roketi uygulamaları için geliştirilen gömülü bir uçuş bilgisayarı yazılımını içermektedir. Yazılım; uçuş esnasında sensör verilerinin toplanması, filtrelenmesi, telemetri olarak iletilmesi, paraşüt tetikleme kararlarının verilmesi ve uçuş verilerinin SD karta kaydedilmesi amacıyla tasarlanmıştır.
+Bu depo, model roket ve sonda roketi uygulamaları için geliştirilmiş **modüler ve çoklu mikrodenetleyici mimarisine sahip bir uçuş bilgisayarı sistemini** içermektedir. Sistem; uçuş kontrolü, haberleşme, görev yükü ve yer istasyonu olmak üzere **dört bağımsız yazılımdan** oluşur.
 
-Geliştiriciler
+Amaç; uçuş güvenliğini korurken, telemetri kararlılığını artırmak ve bilimsel görevleri uçuş kontrolünden izole etmektir.
 
-Yavuz Selim Yılmaz
+---
 
-Hikmet Berat Ünverdi
+## Geliştiriciler
 
-Genel Özellikler
+* **Yavuz Selim Yılmaz**
+* **Hikmet Berat Ünverdi**
 
-BMP280 ve BNO055 sensörlerinden veri okuma
+---
 
-Kalman filtresi ile irtifa, ivme ve yönelim verilerinin filtrelenmesi
+## Sistem Genel Bakışı
 
-Apogee (tepe noktası) tespiti
+Sistem, görevlerin birbirini etkilememesi için **ayrık sorumluluk prensibiyle** tasarlanmıştır.
 
-Drogue ve ana paraşüt için bağımsız tetikleme algoritmaları
+* Uçuş kararları ve kurtarma algoritmaları ayrı bir MCU’da çalışır
+* Haberleşme ve RF yükü ayrı bir MCU’ya alınmıştır
+* Bilimsel görev yükü bağımsızdır
+* Yer istasyonu yalnızca izleme ve veri birleştirme yapar
 
-Non-blocking (bloklamasız) pyro sürme yapısı
+Bu yapı, yarışma ve gerçek uçuş senaryolarında **kararlılık ve güvenlik** sağlar.
 
-SD kart üzerine CSV formatında telemetri kaydı
+---
 
-Uçuş sonunda özet (maksimum irtifa, paraşüt açılma irtifaları) kaydı
+## Yazılım Bileşenleri
 
-İniş sonrası buzzer ile konum bildirimi
+Sistem toplam **4 ana yazılımdan** oluşur:
 
-Test Modları
+---
 
-Yazılım, TEKNOFEST Roket Yarışması test gereksinimlerine uygun olarak iki farklı test modunu destekler:
+## 1. Uçuş Bilgisayarı (Flight Computer)
 
-SİT (Sensör İzleme Testi)
+Uçuş bilgisayarı, roketin **uçuş boyunca karar veren merkezi birimidir**.
 
-Sensörlerden okunan veriler 10 Hz hızla seri port üzerinden gönderilir
+### Görevleri
 
-Telemetri paketleri özel başlık–checksum–footer yapısı içerir
+* Sensör verilerini toplamak ve filtrelemek
+* Apogee (tepe noktası) tespiti yapmak
+* Drogue ve ana paraşüt açılma kararlarını vermek
+* Uçuş durumunu (state) belirlemek
+* Telemetri verisini haberleşme MCU’suna iletmek
 
-SUT (Sentetik Uçuş Testi)
+### Özellikler
 
-Harici test cihazından gelen sentetik uçuş verileri kullanılır
+* Bloklamasız (non-blocking) yapı
+* Test modları (SİT / SUT) ile yarışma uyumluluğu
+* Uçuş güvenliğini önceliklendiren karar mekanizması
 
-Gerçek sensör verileri yerine SUT verileri ile apogee ve paraşüt algoritmaları çalıştırılır
+Uçuş bilgisayarı **RF, GPS veya yer istasyonu bağımlılığı olmadan** çalışır.
 
-SUT sırasında komut ve telemetri çakışmasını önleyen ayrıştırılmış protokol yapısı mevcuttur
+---
 
-Haberleşme Mimarisi
+## 2. Haberleşme MCU (Telemetry Controller)
 
-RS232 (Serial1): SİT / SUT test haberleşmesi
+Haberleşme MCU, uçuş bilgisayarı ile yer istasyonu arasındaki **telemetri köprüsüdür**.
 
-Serial2: İkinci MCU’ya telemetri iletimi
+### Görevleri
 
-Özel Paket Formatları:
+* Uçuş bilgisayarından gelen verileri almak
+* Paket bütünlüğünü (header / checksum / footer) doğrulamak
+* GPS verisi ile telemetriyi zenginleştirmek
+* RFD900 üzerinden yer istasyonuna veri göndermek
 
-Big-endian float veri yapısı
+### Temel İlke
 
-Header / Checksum / Footer doğrulaması
+Bu MCU:
 
-Durum bitleri ile uçuş fazı bilgisi aktarımı
+* ❌ Uçuş kararı vermez
+* ❌ Paraşüt tetiklemez
 
-SD Kart Kayıtları
+Sadece:
 
-telemetry.csv
+> **Veri alır – doğrular – paketler – iletir**
 
-Anlık uçuş verileri (irtifa, ivme, açı, pil durumu vb.)
+Bu sayede RF ve GPS işlemleri uçuş güvenliğini etkilemez.
 
-summary.csv
+---
 
-Maksimum irtifa
+## 3. Görev Yükü MCU (Payload Computer)
 
-Drogue ve ana paraşüt açılma irtifaları
+Görev yükü MCU, uçuş sırasında **bilimsel ve çevresel verilerin toplanmasından** sorumludur.
 
-Donanım Gereksinimleri
+### Görevleri
 
-Arduino Mega (veya eşdeğer çoklu UART destekli MCU)
+* Basınç sensörü ile irtifa ölçümü
+* GPS ile konum ve irtifa takibi
+* Bilimsel sensör verilerinin toplanması
+* Tüm verilerin SD karta CSV formatında kaydı
+* Görev yükü telemetrisinin yer istasyonuna iletilmesi
 
-BMP280 (basınç / irtifa)
+### Özellikler
 
-BNO055 (ivme + yönelim)
+* Referans irtifa kalibrasyonu
+* Uçuş sonrası analiz için sürekli veri kaydı
+* Uçuş sistemlerinden tamamen bağımsız yapı
 
-SD kart modülü
+Görev yükü, uçuş kontrol sistemlerinden **tamamen izoledir**.
 
-Pyro çıkışları (drogue & main)
+---
 
-Buzzer
+## 4. Yer İstasyonu (Ground Station)
 
-Notlar
+Yer istasyonu, uçuş boyunca tüm telemetriyi **eş zamanlı olarak izlemek ve birleştirmek** için tasarlanmıştır.
 
-Kod, yarışma ve akademik kullanım amacıyla geliştirilmiştir
+### Görevleri
 
-Parametreler (irtifa eşikleri, ivme limitleri vb.) görev profiline göre güncellenmelidir
+* Ana telemetriyi (uçuş + haberleşme MCU) almak
+* Görev yükü telemetrisini almak
+* Paketleri ayrı ayrı doğrulamak
+* Son geçerli verileri birleştirerek tek çıktı sunmak
 
-Gerçek uçuş öncesi SİT ve SUT testlerinin eksiksiz yapılması önerilir
+### Veri Kaynakları
+
+* **RFD1:** Ana uçuş telemetrisi
+* **RFD2:** Görev yükü telemetrisi
+
+Yer istasyonu:
+
+* ❌ Uçuşa müdahale etmez
+* ❌ Komut göndermez
+
+Sadece **izleme ve analiz** amaçlıdır.
+
+---
+
+## Sistem Mimarisi
+
+Sistem mimarisi aşağıdaki prensiplere dayanır:
+
+* Modülerlik
+* Hata izolasyonu
+* Yarışma uyumluluğu
+* Gerçek uçuş güvenliği
+
+Her bir yazılım, diğerlerinden bağımsız olarak çalışabilecek şekilde tasarlanmıştır.
+
+---
+
+## Donanım Varsayımları
+
+* Çoklu UART destekli mikrodenetleyiciler (Arduino Mega / eşdeğeri)
+* RFD900 / RFD900X modemler
+* BMP280 basınç sensörü
+* GPS modülü
+* SD kart modülü
+
+---
+
+## Notlar
+
+* Bu proje **yarışma ve akademik kullanım** amacıyla geliştirilmiştir
+* Uçuş öncesi tüm test modlarının çalıştırılması önerilir
+* Parametreler görev profiline göre ayarlanmalıdır
+
+---
+
+## Sonuç
+
+Bu sistem;
+
+* Güvenli
+* Modüler
+* Yarışma odaklı
+* Genişletilebilir
+
+bir uçuş bilgisayarı mimarisi sunar.
