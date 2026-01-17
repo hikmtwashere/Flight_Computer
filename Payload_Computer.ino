@@ -1,3 +1,8 @@
+/*
+ * Flight Computer Software
+ * Developed by: Selim Yılmaz & Hikmet Berat Ünverdi
+ */
+
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
